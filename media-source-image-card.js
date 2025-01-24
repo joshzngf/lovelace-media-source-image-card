@@ -24,12 +24,22 @@ class MediaSourceImageCard extends HTMLElement {
             }
 
             img {
+              position: relative;
               display: block;
               width: 100%;
               object-fit: ${this.config.object_fit ? this.config.object_fit : 'contain'} ;
               object-position: ${this.config.object_position ? this.config.object_position : '50% 50%'} ;
             }
-
+            
+            img.blurred-bg {
+              position: absolute;
+              object-fit: cover;
+              object-position: 50% 50%;
+              height: 100%;
+              width: 100%;
+              filter: blur(16px);
+            }
+            
             img.off {
               -webkit-filter: grayscale();
             }
@@ -130,7 +140,10 @@ class MediaSourceImageCard extends HTMLElement {
         if (response.url.indexOf('mp4') != -1 || response.url.indexOf('ogg') != -1 || response.url.indexOf('webm') != -1) {
           this.content.innerHTML = `<video width="${this.config.video_options?.width || '320'}" height="${this.config.video_options?.height || '240'}" ${this.config.video_options?.show_controls ? 'controls' : ''} ${this.config.video_options?.loop ? 'loop' : ''} ${this.config.video_options?.autoplay ? 'autoplay' : ''} ${this.config.video_options?.muted ? 'muted' : ''} ${this.config.video_options?.type ? `type=${this.config.video_options?.type}`: ''}><source src="${response.url}" playsInLine></source></video>`;
         } else {
-          this.content.innerHTML = `<img src=${response.url} class="${(this.config.entity_id && this.config.apply_grayscale) ? this._hass.states[this.config.entity_id].state : ''}">`;
+          let imgHtml = `<img src=${response.url} class="${(this.config.entity_id && this.config.apply_grayscale) ? this._hass.states[this.config.entity_id].state : ''}">`;
+          this.content.innerHTML = this.config.show_blurred_background 
+            ? `<img src=${response.url} class="blurred-bg ${(this.config.entity_id && this.config.apply_grayscale) ? this._hass.states[this.config.entity_id].state : ''}">` + imgHtml
+            : imgHtml;
         }
       }
       })
