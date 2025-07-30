@@ -29,6 +29,7 @@ class MediaSourceImageCard extends HTMLElement {
               width: 100%;
               object-fit: ${this.config.object_fit ? this.config.object_fit : 'contain'} ;
               object-position: ${this.config.object_position ? this.config.object_position : '50% 50%'} ;
+              ${this.config.background_color ? 'background: ' + this.config.background_color + ';' : ''}
             }
             
             img.blurred-bg {
